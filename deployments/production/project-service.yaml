@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {PROJECT_NAME}
+  namespace: {ENVIRONMENT}
+spec:
+  type: LoadBalancer
+  ports:
+    - name: {PROJECT_NAME}-{CONTAINER_PORT}
+      port: {EXPOSED_PORT}
+      targetPort: {CONTAINER_PORT}
+      protocol: TCP
+  selector:
+    app: {PROJECT_NAME}

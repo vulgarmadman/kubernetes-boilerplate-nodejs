@@ -1,0 +1,27 @@
+{
+  "name": "kubernetes-boilerplate-nodejs",
+  "version": "1.0.0",
+  "description": "Test NodeJS application skeleton app",
+  "main": "index.js",
+  "repository": {
+    "url": "https://github.com/vulgarmadman/kubernetes-boilerplate-nodejs.git",
+    "type": "git"
+  },
+  "author": "Alex Jones <alex@ccautomation.uk>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js",
+    "start:dev": "NODE_ENV=dev node server.js",
+    "start:staging": "NODE_ENV=staging node server.js",
+    "start:production": "NODE_ENV=production node server.js",
+    "test": "NODE_ENV=dev mocha './**/*.spec.js'"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "request": "^2.85.0"
+  }
+}

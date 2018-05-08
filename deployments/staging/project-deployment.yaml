@@ -1,0 +1,23 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {PROJECT_NAME}
+  namespace: {ENVIRONMENT}
+spec:
+  replicas: {REPLICAS}
+  template:
+    metadata:
+      labels:
+        app: {PROJECT_NAME}
+    spec:
+      containers:
+        - name: app
+          command:
+            - npm
+            - run
+            - start:staging
+          image: {DOCKER_IMAGE_TAG}
+          imagePullPolicy: Always
+          ports:
+          - containerPort: {CONTAINER_PORT}
