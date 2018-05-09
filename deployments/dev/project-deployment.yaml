@@ -18,6 +18,6 @@ spec:
             - run
             - start:dev
           image: {DOCKER_IMAGE_TAG}
-          imagePullPolicy: Always
+          imagePullPolicy: Never
           ports:
           - containerPort: {CONTAINER_PORT}

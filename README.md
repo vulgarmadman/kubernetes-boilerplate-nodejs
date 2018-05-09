@@ -47,7 +47,16 @@ MAX_REPLICAS           - max number of replicas the deployment should deploy
 To build the application, from the root, run:
 
 ```
-bash scripts/build-project.sh -t [TAG_OF_THE_IMAGE] -e [ENVIRONMENT]
+bash scripts/build-project.sh -h
+build-project - build the project
+
+build-project [options]
+
+options:
+-h, --help                      show brief help
+-e, --environment=ENVIRONMENT   environment to deploy to [production/staging/dev] - defaults to dev
+-t, --image-tag=TAG             tag of the image to apply. Default is 'latest'
+-p, --push-image                if set, the image will attempt to push to the configured repo
 
 ```
 
@@ -56,7 +65,16 @@ bash scripts/build-project.sh -t [TAG_OF_THE_IMAGE] -e [ENVIRONMENT]
 To test the build image, from the project root, run:
 
 ```
-bash scripts/test-project.sh -t [TAG_OF_THE_IMAGE] -e [ENVIRONMENT]
+bash scripts/test-project.sh -h
+test-project - test the project
+
+test-project [options]
+
+options:
+-h, --help                      show brief help
+-e, --environment=ENVIRONMENT   environment to deploy to [production/staging/dev] - defaults to dev
+-t, --image-tag=TAG             tag of the image to test. Default is 'latest'
+
 ```
 
 
@@ -65,12 +83,30 @@ bash scripts/test-project.sh -t [TAG_OF_THE_IMAGE] -e [ENVIRONMENT]
 To deploy the project, from the root run:
 
 ```
-bash scripts/deploy-project.sh -t [TAG_OF_THE_IMAGE] -e [ENVIRONMENT] -o (if set, just show what kubectl would do. Omit this to run kubectl)
+bash scripts/deploy-project.sh -h
+deploy-project - deploy the project to kubernetes
+
+deploy-project [options]
+
+options:
+-h, --help                      show brief help
+-e, --environment=ENVIRONMENT   environment to deploy to [production/staging/dev] - defaults to dev
+-t, --image-tag=TAG                   tag of the image to test. Default is 'latest'
+-o, --output-only               dont kubectl apply - just echo it out for testing
+
 ```
 
 ## Minikube
 
-To run in dev, Minikube has been chosen.  Ensure you have a working copy of minikube installed prior to continuing.
+To run in dev, Minikube has been chosen.
+
+### Install
+
+```
+export MINIKUBE_VERSION=v0.26.1
+
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/$MINIKUBE_VERSION/minikube-darwin-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+```
 
 To reuse the docker instance which is part of minikube, run the following first:
 
@@ -97,24 +133,24 @@ Kubectl is now configured to use the cluster.
 Create the 'dev' namespace:
 
 ```
-kubectl create namespace dev          # only needs running on creation of the minikube cluster
+kubectl create namespace dev
 
 ```
 
-### Internal registry
+### Troubleshooting
 
-For more info on the below, see [https://blog.hasura.io/sharing-a-local-registry-for-minikube-37c7240d0615](https://blog.hasura.io/sharing-a-local-registry-for-minikube-37c7240d0615)
+If you expericence any issues during the setup of minikube, delete all current clusters and redeploy
 
 ```
-kubectl create -f https://gist.githubusercontent.com/alexjones1103/0630332d2b8f36d9ee3791c24b894891/raw/24c9867ae3f76e7943d0ee450fdc12889a639559/minikube-docker-repo.yaml
-kubectl port-forward --namespace kube-system $(kubectl get po -n kube-system | grep kube-registry-v0 | \
-awk '{print $1;}') 5000:5000
+minikube stop
+minikube delete
+minikube start
 ```
 
 ### Connecting to the exposed service
 
 ```
-minikube service -n dev --url kubernetes-boilerplate-nodejs
+minikube service kubernetes-bolierplate-nodejs -n dev --url
 ```
 
 returns something like:
@@ -123,10 +159,31 @@ returns something like:
 http://192.168.99.100:31983
 ```
 
+OR
+
+```
+minikube service kubernetes-bolierplate-nodejs -n dev --url
+```
+
 then curl the service endpoint
 
 ```
 curl http://192.168.99.100:31983/ping
+{"result":"pong!"}
+```
+
+Or, to do it all in one command
+
+```
+^_^..<$> curl -i $(minikube service kubernetes-bolierplate-nodejs -n dev --url)/ping
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: text/html; charset=utf-8
+Content-Length: 18
+ETag: W/"12-y3UoF5EGTJ9+vDBa4HN+aKAS0S8"
+Date: Wed, 09 May 2018 09:13:38 GMT
+Connection: keep-alive
+
 {"result":"pong!"}
 ```
 
